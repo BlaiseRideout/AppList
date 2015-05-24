@@ -3,10 +3,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".AppList">
-    <ListView
-	    android:id="@+id/apps_listview"
-	    android:dividerHeight="0px"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent">
-    </ListView>
+    	<ListView
+		android:id="@+id/apps_listview"
+		android:divider="@null"
+		android:dividerHeight="0dp"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+	</ListView>
 </LinearLayout>
