@@ -7,7 +7,6 @@ public class AppDetail implements Comparable<AppDetail> {
 	public CharSequence name;
 	public CharSequence id;
 	public String header;
-	public boolean isHidden = false;
 
 	public AppDetail(Drawable icon, CharSequence name, CharSequence id, String header) {
 		this.name = name;

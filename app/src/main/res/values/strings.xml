@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AppList</string>
 
+    <string name="preferences">preferences</string>
     <string name="favorites">favorites</string>
     <string name="hidden">hidden</string>
-    <string name="showHidden">showHidden</string>
 </resources>

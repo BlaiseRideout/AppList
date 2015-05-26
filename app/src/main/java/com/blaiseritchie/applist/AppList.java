@@ -22,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.graphics.Color;
 import android.net.Uri;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,6 @@ public class AppList extends Activity {
 	private List<AppDetail> apps;
 	private Set<String> favorites;
 	private Set<String> hidden;
-	private boolean showHidden;
 	private ListView list;
 
 	@Override
@@ -57,7 +55,7 @@ public class AppList extends Activity {
 	}
 
 	private void loadPrefs() {
-		this.sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+		this.sharedPref = this.getPreferences(getString(R.string.preferences), Context.MODE_PRIVATE);
 		this.favorites = this.sharedPref.getStringSet(getString(R.string.favorites), null);
 		if(this.favorites == null) {
 			this.favorites = new HashSet<String>();
@@ -72,7 +70,6 @@ public class AppList extends Activity {
 			editor.putStringSet(getString(R.string.hidden), this.hidden);
 			editor.commit();
 		}
-		this.showHidden = this.sharedPref.getBoolean(getString(R.string.showHidden), false);
 	}
 
 	private void getApps() {
@@ -87,8 +84,7 @@ public class AppList extends Activity {
 		List<ResolveInfo> availableActivities = manager.queryIntentActivities(i, 0);
 		for(ResolveInfo ri : availableActivities) {
 			AppDetail app = new AppDetail(ri.activityInfo.loadIcon(manager), ri.loadLabel(manager), ri.activityInfo.packageName, "");
-			app.isHidden = this.hidden.contains(app.toString());
-			if(!app.isHidden || this.showHidden) {
+			if(!hidden.contains(app.toString())){
 				if(favorites.contains(app.toString()))
 					favoriteApps.add(app);
 				else
@@ -129,16 +125,6 @@ public class AppList extends Activity {
 				TextView appLabel = (TextView)convertView.findViewById(R.id.item_app_label);
 				appLabel.setText(app.name);
 
-				/*if(app.isHidden)
-					appLabel.setTextColor(getResources().getColor(R.color.hidden));*/
-
-				int c = appLabel.getCurrentTextColor();
-				if(app.isHidden)
-					appLabel.setTextColor(Color.argb(0x33, Color.red(c), Color.green(c), Color.blue(c)));
-				else
-					appLabel.setTextColor(Color.argb(200, Color.red(c), Color.green(c), Color.blue(c)));
-
-
 				return convertView;
 			}
 		};
@@ -172,10 +158,7 @@ public class AppList extends Activity {
 		else
 			menu.add(0, acmi.position, 0, "Hide");
 
-		if(this.showHidden)
-			menu.add(0, acmi.position, 0, "Hide hidden");
-		else
-			menu.add(0, acmi.position, 0, "Show hidden");
+		menu.add(0, acmi.position, 0, "Settings");
 	}
 
 	@Override
@@ -207,23 +190,8 @@ public class AppList extends Activity {
 			getApps();
 			fillListView();
 		}
-		else if(item.getTitle().equals("Unhide")) {
-			hidden.remove(apps.get(item.getItemId()).toString());
-			SharedPreferences.Editor editor = this.sharedPref.edit();
-			editor.putStringSet(getString(R.string.hidden), hidden);
-			editor.commit();
-			getApps();
-			fillListView();
-		}
-		else if(item.getTitle().equals("Show hidden")) {
-			this.showHidden = true;
-			getApps();
-			fillListView();
-		}
-		else if(item.getTitle().equals("Hide hidden")) {
-			this.showHidden = false;
-			getApps();
-			fillListView();
+		else if(item.getTitle().equals("Settings")) {
+			startActivity(new Intent(this, Settings.class));
 		}
 		return false;
 	}
